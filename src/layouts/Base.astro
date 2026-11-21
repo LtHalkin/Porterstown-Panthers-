@@ -6,12 +6,12 @@ import '@fontsource/inter/700.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { site } from '../lib/site';
+import { site, cleanPath } from '../lib/site';
 
 interface Props { title: string; description: string; ogImage?: string; jsonLd?: object[]; noindex?: boolean }
 const { title, description, ogImage = '/og-image.png', jsonLd = [], noindex = false } = Astro.props;
 const full = title.includes('Porterstown Panthers') ? title : `${title} | Porterstown Panthers`;
-const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', Astro.site).href;
+const canonical = new URL(cleanPath(Astro.url.pathname), Astro.site).href;
 const og = new URL(ogImage, Astro.site).href;
 const club = {
   '@context': 'https://schema.org',

@@ -53,3 +53,9 @@ export function parts(iso: string) {
     year: d.getUTCFullYear(),
   };
 }
+
+// With build.format 'file', Astro reports /about.html and /index.html. Normalise to the public URL.
+export function cleanPath(p: string) {
+  const c = p.replace(/\/index\.html$/, '/').replace(/\.html$/, '').replace(/\/$/, '');
+  return c || '/';
+}
