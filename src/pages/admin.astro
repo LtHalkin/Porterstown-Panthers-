@@ -1,0 +1,57 @@
+---
+import '@fontsource/barlow-condensed/700.css';
+import '@fontsource/barlow-condensed/800.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/700.css';
+import '../styles/global.css';
+---
+<!doctype html>
+<html lang="en-IE">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Club admin | Porterstown Panthers</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="adm">
+    <div id="app"><p style="padding:2rem">Loading admin…</p></div>
+    <noscript><p style="padding:2rem">The admin page needs JavaScript.</p></noscript>
+    <script src="../scripts/admin.ts"></script>
+  </body>
+</html>
+<style is:global>
+  .adm { background: var(--grey-100); min-height: 100dvh; padding-bottom: 6rem; font-size: 1rem; }
+  .adm h1, .adm h2, .adm h3 { line-height: 1; }
+  .a-top { background: var(--black); color: #fff; padding: .9rem var(--gutter); display: flex; justify-content: space-between; align-items: center; gap: 1rem; position: sticky; top: 0; z-index: 10; }
+  .a-top b { font: 800 1.3rem var(--font-display); text-transform: uppercase; letter-spacing: .05em; } .a-top b span { color: var(--neon); }
+  .a-wrap { max-width: 56rem; margin: 0 auto; padding: 1.5rem var(--gutter); }
+  .a-tabs { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .a-tab { font: 800 .95rem var(--font-display); letter-spacing: .1em; text-transform: uppercase; padding: .7rem 1rem; border: 2px solid var(--black); background: #fff; cursor: pointer; }
+  .a-tab[aria-selected='true'] { background: var(--black); color: var(--neon); }
+  .a-card { background: #fff; border: 1px solid #d6d6d2; padding: 1.25rem; margin-bottom: 1rem; }
+  .a-card h2 { font-size: 1.9rem; margin-bottom: .75rem; } .a-card h3 { font-size: 1.35rem; margin-bottom: .5rem; }
+  .a-help { color: var(--grey-700); font-size: .9rem; margin: 0 0 1rem; }
+  .a-grid { display: grid; gap: .75rem; } @media (min-width: 40rem) { .a-grid.c2 { grid-template-columns: 1fr 1fr; } .a-grid.sess { grid-template-columns: 8rem 7rem 1fr 1.2fr auto; align-items: end; } }
+  .a-card label { display: grid; gap: .3rem; font-weight: 700; font-size: .8rem; letter-spacing: .04em; }
+  .a-card input[type=text], .a-card input[type=url], .a-card input[type=date], .a-card input[type=password], .a-card select, .a-card textarea, .a-login input { font: inherit; font-weight: 400; padding: .7rem .75rem; border: 1px solid #9a9a96; border-radius: 0; background: #fff; width: 100%; min-height: 2.9rem; }
+  .a-card textarea { min-height: 5rem; resize: vertical; }
+  .a-btn { font: 800 .95rem var(--font-display); letter-spacing: .1em; text-transform: uppercase; padding: .75rem 1.1rem; background: var(--black); color: #fff; border: 2px solid var(--black); cursor: pointer; min-height: 2.9rem; }
+  .a-btn:hover { background: var(--neon); color: var(--neon-ink); border-color: var(--neon); }
+  .a-btn.neon { background: var(--neon); color: var(--neon-ink); border-color: var(--neon); } .a-btn.neon:hover { background: #fff; }
+  .a-btn.ghost { background: transparent; color: var(--black); } .a-btn.danger { background: transparent; color: #b00020; border-color: #b00020; } .a-btn.danger:hover { background: #b00020; color: #fff; }
+  .a-btn:disabled { opacity: .5; cursor: wait; }
+  .a-season { display: grid; gap: .6rem; } @media (min-width: 40rem) { .a-season { grid-template-columns: 1fr 1fr; } }
+  .a-season button { text-align: left; padding: 1rem; border: 2px solid var(--black); background: #fff; cursor: pointer; font: inherit; }
+  .a-season button b { display: block; font: 800 1.6rem var(--font-display); text-transform: uppercase; }
+  .a-season button[aria-pressed='true'] { background: var(--neon); }
+  .a-row { border-top: 1px solid #e2e2de; padding-top: .9rem; margin-top: .9rem; }
+  .a-photos { display: grid; gap: 1rem; } @media (min-width: 40rem) { .a-photos { grid-template-columns: 1fr 1fr; } }
+  .a-photo { background: #fff; border: 1px solid #d6d6d2; display: grid; gap: .6rem; padding: .75rem; align-content: start; }
+  .a-photo img, .a-ph { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: #ddd; display: grid; place-content: center; color: var(--grey-700); font-size: .85rem; }
+  .a-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--black); color: #fff; padding: .8rem var(--gutter); display: flex; justify-content: space-between; align-items: center; gap: 1rem; z-index: 20; }
+  .a-msg { padding: .9rem 1rem; margin-bottom: 1rem; border-left: 6px solid var(--black); background: #fff; } .a-msg.err { border-color: #b00020; color: #b00020; } .a-msg.ok { border-color: #2d8a00; }
+  .a-login { max-width: 24rem; margin: 18vh auto 0; padding: 0 var(--gutter); display: grid; gap: 1rem; } .a-login h1 { font-size: 3rem; }
+  .a-checks { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; } .a-checks label { display: flex; align-items: center; gap: .5rem; font-weight: 400; font-size: .95rem; }
+  details.a-card > summary { cursor: pointer; font: 800 1.35rem var(--font-display); text-transform: uppercase; }
+</style>

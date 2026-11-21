@@ -43,6 +43,31 @@ Leave out details that are not confirmed.
 Phone, social links, distances and training types are in `src/data/site.json`.
 **Check the Facebook link** there: it currently points to a Facebook search because the exact page URL was not verified.
 
+## Admin page (`/admin`)
+
+A password-protected page for the committee to change training times and places, switch season,
+manage events, upload or remove photos and edit contact details, with no code or GitHub needed.
+**Publish changes** commits straight to this repo (one commit per publish), and Cloudflare
+rebuilds the site, so changes go live in about a minute.
+
+It runs as a Cloudflare Pages Function (`functions/api/admin/[[route]].ts`). Set these in
+Cloudflare Pages > Settings > Variables and Secrets (Production), as **encrypted secrets**, then redeploy:
+
+| Name | Value |
+| --- | --- |
+| `ADMIN_PASSWORD` | A long password (a few random words). Share only with the committee. |
+| `GITHUB_TOKEN` | GitHub fine-grained personal access token: GitHub > Settings > Developer settings > Fine-grained tokens. Repository access: **only this repo**. Permission: **Contents: Read and write**. Nothing else. |
+| `GITHUB_BRANCH` | Optional. Branch the admin saves to; must be the branch Cloudflare deploys. Defaults to `main`. |
+| `SESSION_SECRET` | Optional. Random string used to sign login cookies. Defaults to a value derived from the password. |
+
+Notes:
+- Until both `ADMIN_PASSWORD` and `GITHUB_TOKEN` exist, `/admin` shows "not configured". The page itself holds no data; everything is behind the login.
+- Logins last 12 hours. To lock everyone out, change `ADMIN_PASSWORD`. To revoke repo access, delete the token on GitHub.
+- If two people edit at once, the second publish is refused and asked to reload, so nobody's changes are silently overwritten.
+- Add a Cloudflare rate-limiting rule for `/api/admin/login` (Security > WAF) for extra protection against password guessing.
+- Photos are resized to 2200 px in the browser before upload. Every publish is a normal Git commit, so any change can be reverted on GitHub.
+- The files in `src/data/` can still be edited directly on GitHub; the admin page and manual edits both work.
+
 ## Development
 ```
 npm install

@@ -9,6 +9,6 @@ export default defineConfig({
   site,
   trailingSlash: 'never',
   build: { format: 'file' },
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: (page) => !page.includes('/admin') })],
   image: { layout: 'constrained' },
 });
