@@ -1,0 +1,48 @@
+{
+  "name": "Porterstown Panthers",
+  "locality": "Porterstown, Dublin 15",
+  "tagline": "Stronger Together. Further Together.",
+  "phone": { "display": "087 218 2461", "href": "+353872182461" },
+  "instagram": { "handle": "@porterstown_panthers", "url": "https://www.instagram.com/porterstown_panthers/" },
+  "facebook": { "name": "Porterstown Panthers", "url": "https://www.facebook.com/search/top?q=Porterstown%20Panthers" },
+  "activeSeason": "winter",
+  "distances": ["3K", "5K", "8K", "10K"],
+  "trainingTypes": [
+    { "title": "Interval training", "text": "Short, structured efforts with recovery in between." },
+    { "title": "Hill training", "text": "Repeat climbs to build strength and confidence." },
+    { "title": "Group runs", "text": "Run together at a pace that suits your group." },
+    { "title": "Social running", "text": "Easy miles and good conversation." }
+  ],
+  "locations": {
+    "carpenter": {
+      "name": "Outside The Carpenter Pub",
+      "area": "Carpenterstown, Dublin 15",
+      "mapQuery": "The Carpenter Pub, Carpenterstown, Dublin 15"
+    },
+    "whitesgate": {
+      "name": "White's Gate",
+      "area": "Phoenix Park, Dublin",
+      "mapQuery": "White's Gate, Phoenix Park, Dublin"
+    }
+  },
+  "seasons": {
+    "winter": {
+      "label": "Winter",
+      "note": "",
+      "sessions": [
+        { "day": "Tuesday", "time": "6:45 PM", "location": "carpenter", "what": "Group running and training" },
+        { "day": "Thursday", "time": "6:45 PM", "location": "carpenter", "what": "Group running and training" },
+        { "day": "Sunday", "time": "8:30 AM", "location": "whitesgate", "what": "Group running" }
+      ]
+    },
+    "summer": {
+      "label": "Summer",
+      "note": "Tuesday and Thursday sessions were previously advertised at White's Gate. Confirm on Instagram before travelling.",
+      "sessions": [
+        { "day": "Tuesday", "time": "6:45 PM", "location": "whitesgate", "what": "Group running and training" },
+        { "day": "Thursday", "time": "6:45 PM", "location": "whitesgate", "what": "Group running and training" },
+        { "day": "Sunday", "time": "8:30 AM", "location": "whitesgate", "what": "Group running" }
+      ]
+    }
+  }
+}

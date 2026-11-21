@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import GalleryTile from '../components/GalleryTile.astro';
+import Lightbox from '../components/Lightbox.astro';
+import gallery from '../data/gallery.json';
+import { findImage } from '../lib/images';
+import { site } from '../lib/site';
+const cats = ['All', 'Club Runs', 'Group Hikes', 'Races', 'Social Events', 'Club Activities'];
+const real = gallery.filter((g) => findImage('gallery', g.file)).length;
+---
+<Base title="Photo Gallery" description="Photos from Porterstown Panthers: club runs, group hikes, races, social events and club activities from our Dublin 15 running community.">
+  <section class="page-hero"><div class="wrap"><div class="eyebrow">Gallery</div><h1>The club<br/>in pictures</h1><p class="lede">Club runs, hikes, races and socials.</p></div></section>
+  <section class="section dark" style="padding-top:clamp(2.5rem,5vw,4rem)">
+    <div class="wrap">
+      <div class="tabs" role="group" aria-label="Filter photos">
+        {cats.map((c, i) => <button class="tab" type="button" data-cat-filter={c} aria-pressed={i === 0 ? 'true' : 'false'}>{c}</button>)}
+      </div>
+      {real === 0 && (
+        <div class="notice" style="margin-bottom:2rem"><strong>Club photos coming soon</strong>The tiles below are placeholders. Follow <a class="link" href={site.instagram.url} rel="noopener">{site.instagram.handle}</a> to see the latest photos.</div>
+      )}
+      <div class="masonry" id="grid">{gallery.map((g) => <GalleryTile item={g} />)}</div>
+      <p class="empty" id="g-empty" hidden style="color:var(--grey-300);border-color:#444">No photos in this category yet.</p>
+      <p class="credit" style="margin-top:2rem">Photo credits are shown with each image in the viewer.</p>
+    </div>
+  </section>
+  <section class="cta-band"><div class="wrap"><h2>See more on Instagram</h2><a class="btn" href={site.instagram.url} rel="noopener">{site.instagram.handle} <Icon name="arrow" /></a></div></section>
+  <Lightbox />
+</Base>
+<script>
+  const btns = document.querySelectorAll<HTMLButtonElement>('[data-cat-filter]');
+  const tiles = document.querySelectorAll<HTMLElement>('#grid .tile');
+  const empty = document.getElementById('g-empty')!;
+  btns.forEach((b) => b.addEventListener('click', () => {
+    const f = b.dataset.catFilter!;
+    btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    let n = 0;
+    tiles.forEach((t) => { const show = f === 'All' || t.dataset.cat === f; t.hidden = !show; if (show) n++; });
+    empty.hidden = n > 0;
+  }));
+</script>

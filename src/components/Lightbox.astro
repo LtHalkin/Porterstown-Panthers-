@@ -1,0 +1,57 @@
+---
+import Icon from './Icon.astro';
+---
+<dialog class="lightbox" aria-label="Photo viewer">
+  <div class="lb-inner">
+    <div class="lb-bar"><span class="lb-count" aria-live="polite"></span><button class="lb-btn lb-close" aria-label="Close photo viewer"><Icon name="close" /></button></div>
+    <div class="lb-stage">
+      <button class="lb-btn lb-prev" aria-label="Previous photo"><Icon name="prev" /></button>
+      <img alt="" />
+      <button class="lb-btn lb-next" aria-label="Next photo"><Icon name="next" /></button>
+    </div>
+    <p class="lb-cap"></p>
+  </div>
+</dialog>
+<script>
+  const dlg = document.querySelector<HTMLDialogElement>('dialog.lightbox')!;
+  const img = dlg.querySelector('img')!;
+  const cap = dlg.querySelector('.lb-cap')!;
+  const count = dlg.querySelector('.lb-count')!;
+  let list: HTMLElement[] = [];
+  let i = 0;
+  let opener: HTMLElement | null = null;
+  const visible = () => [...document.querySelectorAll<HTMLElement>('[data-lb]')].filter((b) => !b.closest('[hidden]'));
+  const show = (n: number) => {
+    i = (n + list.length) % list.length;
+    const b = list[i];
+    const el = b.querySelector('img')!;
+    img.src = el.dataset.full || el.currentSrc || el.src;
+    img.alt = b.dataset.alt || '';
+    cap.textContent = [b.dataset.alt, b.dataset.credit && `Photo: ${b.dataset.credit}`].filter(Boolean).join(' · ');
+    count.textContent = `${i + 1} / ${list.length}`;
+  };
+  document.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('[data-lb]');
+    if (!b) return;
+    list = visible(); opener = b;
+    show(list.indexOf(b));
+    dlg.showModal();
+  });
+  dlg.querySelector('.lb-close')!.addEventListener('click', () => dlg.close());
+  dlg.querySelector('.lb-prev')!.addEventListener('click', () => show(i - 1));
+  dlg.querySelector('.lb-next')!.addEventListener('click', () => show(i + 1));
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener('close', () => opener?.focus());
+  dlg.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') show(i - 1);
+    if (e.key === 'ArrowRight') show(i + 1);
+  });
+  let x = 0;
+  dlg.addEventListener('touchstart', (e) => (x = e.touches[0].clientX), { passive: true });
+  dlg.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].clientX - x; if (Math.abs(dx) > 50) show(i + (dx < 0 ? 1 : -1)); });
+  // fade-in loaded thumbnails
+  document.querySelectorAll<HTMLImageElement>('.tile img').forEach((t) => {
+    const done = () => { t.classList.add('loaded'); t.closest('.tile')?.classList.remove('skeleton'); };
+    t.complete ? done() : t.addEventListener('load', done);
+  });
+</script>

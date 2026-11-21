@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+---
+<Base title="Page not found" description="This page could not be found." noindex>
+  <section class="hero no-photo" style="min-height:70svh">
+    <div class="hero-slash"></div>
+    <div class="wrap">
+      <div class="big-404">404</div>
+      <h1 style="font-size:clamp(2.4rem,7vw,4.5rem);margin:1rem 0">Off the route</h1>
+      <p class="lede" style="margin:1rem 0 2rem;color:var(--grey-300)">That page does not exist. Let's get you back on track.</p>
+      <div class="btn-row"><a class="btn" href="/">Back home <Icon name="arrow" /></a><a class="btn ghost" href="/training">Training</a></div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,21 @@
+---
+import { Image } from 'astro:assets';
+import { findImage } from '../lib/images';
+import { formatDate, parts } from '../lib/site';
+const { event, past = false, featured = false } = Astro.props;
+const img = findImage('events', event.image);
+const p = parts(event.date);
+---
+<article class="event reveal" data-event data-featured={featured ? '' : undefined} data-date={event.date} data-tags={event.tags.join('|')}>
+  <div class="event-media">
+    {img ? <Image src={img} alt={event.imageAlt} widths={[480, 800, 1200]} sizes="(min-width: 48rem) 50vw, 100vw" loading="lazy" />
+    : <div class="promo" role="img" aria-label={`${event.title} promotional graphic placeholder`}><span>{event.category}</span><b>{event.title}</b><span>{formatDate(event.date)}</span></div>}
+    <div class="date-tag"><strong>{p.day}</strong>{p.month} {p.year}</div>
+  </div>
+  <div>
+    <h3>{event.title}</h3>
+    <div class="meta"><span>{formatDate(event.date)}</span>{event.time && <span>{event.time}</span>}<span>{event.location}</span></div>
+    <p>{event.description}</p>
+    {event.link && <a class="link" href={event.link.url} rel="noopener">{event.link.label}</a>}
+  </div>
+</article>

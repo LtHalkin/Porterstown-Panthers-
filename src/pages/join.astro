@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Schedule from '../components/Schedule.astro';
+import { site, activeSessions, activeSeason } from '../lib/site';
+const why = [
+  ['A friendly group', 'Run with people who share your enthusiasm, in a relaxed and supportive setting.'],
+  ['Find your pace', 'Distances of 3K, 5K, 8K and 10K.'],
+  ['Real training', 'Interval and hill sessions alongside steady group runs.'],
+  ['A social club', 'Group hikes, events and get-togethers throughout the year.'],
+];
+---
+<Base title="Join Porterstown Panthers" description="Join Porterstown Panthers, a friendly Dublin 15 running club. Find out what to expect at your first session, our distances and weekly training times, and how to get in touch.">
+  <section class="page-hero"><div class="wrap"><div class="eyebrow">Join us</div><h1>Join the<br/>Panthers</h1><p class="lede">New runners and experienced runners are all welcome. The easiest way to start is to come along to a session.</p><div class="btn-row" style="margin-top:2rem"><a class="btn" href="/contact">Contact us <Icon name="arrow" /></a><a class="btn ghost" href="/training">Training times</a></div></div></section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head reveal"><div><div class="eyebrow">Why join</div><h2>Why Porterstown<br/>Panthers?</h2></div></div>
+      <div class="light-features"><div class="features">
+        {why.map(([t, p], i) => <div class="reveal" style={`--d:${(i % 2) * .1}s`}><span class="n">0{i + 1}</span><div><h3>{t}</h3><p>{p}</p></div></div>)}
+      </div></div>
+    </div>
+  </section>
+
+  <section class="section grey">
+    <div class="wrap split">
+      <div class="reveal"><div class="eyebrow">Your first session</div><h2>What to<br/>expect</h2></div>
+      <ol class="steps reveal" style="--d:.1s">
+        <li><div><h3>Check the schedule</h3><p>Pick a session on the <a class="link" href="/training">training page</a> and note the meeting point for the current season.</p></div></li>
+        <li><div><h3>Meet the group</h3><p>Arrive a few minutes early at the meeting point and say hello.</p></div></li>
+        <li><div><h3>Run your distance</h3><p>Groups run 3K, 5K, 8K or 10K. Choose what suits you.</p></div></li>
+        <li><div><h3>Stay in touch</h3><p>Follow the club on Instagram and Facebook for updates and events.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section dark">
+    <div class="wrap">
+      <div class="head"><div><div class="eyebrow">When we run</div><h2>Weekly schedule</h2></div><span class="badge">{activeSeason.label} schedule</span></div>
+      <Schedule sessions={activeSessions} compact />
+      <ul class="pill-row" style="margin-top:3rem">{site.distances.map((d) => <li class="dist">{d}</li>)}</ul>
+      <p class="muted" style="margin-top:1.5rem">Check <a class="link" href={site.instagram.url} rel="noopener">Instagram</a> for last-minute changes.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split">
+      <div class="reveal"><div class="eyebrow">Questions?</div><h2>Get in touch</h2><p class="lede" style="margin-top:1.5rem">Ask us anything about joining, sessions or events.</p><div class="btn-row"><a class="btn dark-btn" href="/contact">Contact us <Icon name="arrow" /></a></div></div>
+      <ul class="contact-list reveal" style="--d:.1s">
+        <li><a class="row" href={`tel:${site.phone.href}`}><Icon name="phone" /><span><span class="k">Call</span><br/><span class="v">{site.phone.display}</span></span></a></li>
+        <li><a class="row" href={site.instagram.url} rel="noopener"><Icon name="instagram" /><span><span class="k">Instagram</span><br/><span class="v">{site.instagram.handle}</span></span></a></li>
+        <li><a class="row" href={site.facebook.url} rel="noopener"><Icon name="facebook" /><span><span class="k">Facebook</span><br/><span class="v">{site.facebook.name}</span></span></a></li>
+      </ul>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "howth-hike-2026",
+    "title": "Annual Howth Hike",
+    "category": "Annual events",
+    "tags": ["Group hikes", "Annual events"],
+    "date": "2026-12-28",
+    "time": "",
+    "location": "Howth, Co. Dublin",
+    "featured": true,
+    "image": "howth-hike.jpg",
+    "imageAlt": "Porterstown Panthers Annual Howth Hike promotional graphic",
+    "description": "The Porterstown Panthers Annual Howth Hike. Meeting point, start time and any other details will be shared by the club on Instagram.",
+    "link": { "label": "Details on Instagram", "url": "https://www.instagram.com/porterstown_panthers/" }
+  }
+]

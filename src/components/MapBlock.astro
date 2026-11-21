@@ -1,0 +1,35 @@
+---
+import Icon from './Icon.astro';
+import { mapEmbed, directions } from '../lib/site';
+const { place, id } = Astro.props;
+---
+<div class="place">
+  <div>
+    <h3>{place.name}</h3>
+    <p class="muted" style="margin:0">{place.area}</p>
+  </div>
+  <div class="map-box" data-map={mapEmbed(place.mapQuery)} data-title={`Map of ${place.name}, ${place.area}`}>
+    <div class="map-load">
+      <Icon name="pin" />
+      <button class="btn" type="button">Load interactive map</button>
+      <small>Loads Google Maps. Or use the directions link below.</small>
+    </div>
+  </div>
+  <a class="btn ghost" href={directions(place.mapQuery)} rel="noopener">Get directions <Icon name="arrow" /></a>
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>('.map-box[data-map]').forEach((box) => {
+    if (box.dataset.ready) return;
+    box.dataset.ready = '1';
+    box.querySelector('button')?.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = box.dataset.map!;
+      f.title = box.dataset.title!;
+      f.loading = 'lazy';
+      f.referrerPolicy = 'no-referrer-when-downgrade';
+      f.addEventListener('load', () => box.querySelector('.map-load')?.remove());
+      box.querySelector('.map-load')!.querySelector('button')!.textContent = 'Loading map…';
+      box.appendChild(f);
+    });
+  });
+</script>

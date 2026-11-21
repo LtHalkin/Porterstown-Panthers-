@@ -1,0 +1,38 @@
+---
+import { nav, site } from '../lib/site';
+---
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-big" aria-hidden="true">Porterstown<br />Panthers</div>
+    <div class="footer-grid">
+      <div>
+        <h4>The club</h4>
+        <p style="max-width:22rem;color:var(--grey-300)">A community running club in {site.locality}. Runners of all abilities, running together.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>{nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}</ul>
+      </div>
+      <div>
+        <h4>Get in touch</h4>
+        <ul>
+          <li><a href={`tel:${site.phone.href}`}>{site.phone.display}</a></li>
+          <li><a href={site.instagram.url} rel="noopener">Instagram {site.instagram.handle}</a></li>
+          <li><a href={site.facebook.url} rel="noopener">Facebook {site.facebook.name}</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Train with us</h4>
+        <ul>
+          <li>Tuesday and Thursday, 6:45 PM</li>
+          <li>Sunday, 8:30 AM</li>
+          <li><a href="/training">See meeting points</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-base">
+      <span>&copy; {new Date().getFullYear()} {site.name}. {site.locality}.</span>
+      <span>Always check Instagram for last-minute changes.</span>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,119 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Schedule from '../components/Schedule.astro';
+import EventCard from '../components/EventCard.astro';
+import GalleryTile from '../components/GalleryTile.astro';
+import Lightbox from '../components/Lightbox.astro';
+import gallery from '../data/gallery.json';
+import { site, activeSessions, activeSeason, upcomingEvents } from '../lib/site';
+import { firstImage, findImage } from '../lib/images';
+
+const hero = firstImage('hero');
+const next = upcomingEvents.slice(0, 2);
+const strip = [...gallery].sort((a, b) => Number(!!findImage('gallery', b.file)) - Number(!!findImage('gallery', a.file))).slice(0, 4);
+const why = [
+  ['Run with people', 'Turn up, say hello and run with a group. Running is easier and a lot more fun together.'],
+  ['Every ability welcome', 'Distances of 3K, 5K, 8K and 10K mean there is a group for you.'],
+  ['Structured sessions', 'Intervals, hill training and steady group runs through the week.'],
+  ['More than running', 'Social runs, group hikes and club events keep the community going.'],
+];
+---
+<Base title="Porterstown Panthers | Running Club in Porterstown, Dublin 15" description="Porterstown Panthers is a community running club in Porterstown, Dublin 15, close to Castleknock. Group runs on Tuesday, Thursday and Sunday for 3K to 10K runners.">
+  <section class={`hero ${hero ? 'has-photo' : 'no-photo'}`}>
+    {hero && <div class="hero-media"><Image src={hero} alt="Porterstown Panthers runners" widths={[800, 1400, 2000]} sizes="100vw" loading="eager" fetchpriority="high" /></div>}
+    <div class="hero-slash"></div>
+    <div class="wrap">
+      <div class="brandline">Porterstown Panthers</div>
+      <h1>Stronger together. <span class="hl">Further</span> together.</h1>
+      <p class="lede">A community running club in Porterstown, Dublin 15. Join us for group runs, hill and interval sessions, social miles and hikes.</p>
+      <div class="btn-row">
+        <a class="btn" href="/join">Join the club <Icon name="arrow" /></a>
+        <a class="btn ghost" href="/training">View training</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split wide-left">
+      <div class="reveal">
+        <div class="eyebrow">The club</div>
+        <h2>Running is better with company</h2>
+      </div>
+      <div class="reveal prose" style="--d:.1s">
+        <p class="lede">Porterstown Panthers is a friendly running club from Porterstown, Dublin 15. We meet three times a week and run together, whatever your pace or experience.</p>
+        <p>Whether you are new to running or looking for a group to train with, there is a place for you here.</p>
+        <a class="link" href="/about">About the club</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dark">
+    <div class="wrap">
+      <div class="head">
+        <div class="reveal"><div class="eyebrow">Training</div><h2>This week's<br/>sessions</h2></div>
+        <span class="badge reveal">{activeSeason.label} schedule</span>
+      </div>
+      <Schedule sessions={activeSessions} compact />
+      <div class="btn-row" style="margin-top:2.5rem">
+        <a class="btn" href="/training">Maps and details <Icon name="arrow" /></a>
+      </div>
+      <p class="muted" style="margin-top:1.5rem">Please check Instagram for last-minute changes.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <div class="reveal"><div class="eyebrow">Events</div><h2>Coming up</h2></div>
+        <a class="link" href="/events">All events</a>
+      </div>
+      {next.length ? <div class="event-grid">{next.map((e) => <EventCard event={e} />)}</div> : <p class="empty">No events announced right now. Follow us on Instagram for the latest.</p>}
+    </div>
+  </section>
+
+  <section class="section dark" style="padding-top:0">
+    <div class="wrap">
+      <div class="head reveal"><div><div class="eyebrow">Why join</div><h2>Why run with<br/>the Panthers</h2></div></div>
+      <div class="features">
+        {why.map(([t, p], i) => <div class="reveal" style={`--d:${(i % 2) * .1}s`}><span class="n">0{i + 1}</span><div><h3>{t}</h3><p>{p}</p></div></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <div class="reveal"><div class="eyebrow">Gallery</div><h2>On the road<br/>and the trails</h2></div>
+        <a class="link" href="/gallery">View the gallery</a>
+      </div>
+      <div class="strip reveal">{strip.map((g) => <GalleryTile item={g} strip />)}</div>
+    </div>
+  </section>
+
+  <section class="section grey">
+    <div class="wrap split">
+      <div class="reveal">
+        <div class="eyebrow">Community</div>
+        <h2>A club built on <span class="hl">people</span></h2>
+      </div>
+      <div class="reveal prose" style="--d:.1s">
+        <p class="lede">The Panthers are about the miles and the chat afterwards. Runs, hikes, socials and the occasional race, all together.</p>
+        <p>Follow along to see what the club is up to and say hello in person at the next session.</p>
+        <div class="social-links on-light" style="margin-top:1.5rem">
+          <a href={site.instagram.url} rel="noopener"><Icon name="instagram" class="icon" /><span><b>Instagram</b><small>{site.instagram.handle}</small></span></a>
+          <a href={site.facebook.url} rel="noopener"><Icon name="facebook" class="icon" /><span><b>Facebook</b><small>{site.facebook.name}</small></span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <div class="wrap">
+      <h2>Come for a run</h2>
+      <a class="btn" href="/join">Join the club <Icon name="arrow" /></a>
+    </div>
+  </section>
+  <Lightbox />
+</Base>

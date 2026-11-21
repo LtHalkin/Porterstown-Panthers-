@@ -1,0 +1,50 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../lib/site';
+const pillars = [
+  ['Community', 'The club is a group of neighbours and friends from Porterstown and the surrounding area.'],
+  ['Friendship', 'Running together is how new friendships start. Expect a warm welcome.'],
+  ['Running together', 'We meet, we warm up and we run as a group. Nobody is left to run alone.'],
+  ['Fitness and wellbeing', 'Regular sessions help build fitness and give a reason to get out the door.'],
+  ['Every ability', 'Distances of 3K, 5K, 8K and 10K make it easy to find your pace.'],
+  ['Social activities', 'Group hikes, events and get-togethers sit alongside the weekly runs.'],
+];
+---
+<Base title="About Porterstown Panthers" description="About Porterstown Panthers, a welcoming community running club in Porterstown, Dublin 15. All abilities, group runs, social events and hikes.">
+  <section class="page-hero"><div class="wrap"><div class="eyebrow">About us</div><h1>About the<br/>Panthers</h1><p class="lede">A community running club in {site.locality}.</p></div></section>
+
+  <section class="section">
+    <div class="wrap split wide-left">
+      <div class="reveal"><h2>Never been to a running club? <span class="hl">Start here.</span></h2></div>
+      <div class="prose reveal" style="--d:.1s">
+        <p class="lede">You do not need to be fast, fit or experienced. You just need to turn up.</p>
+        <p>Porterstown Panthers is a running club for people who enjoy running together. Sessions are friendly and relaxed, with distances from 3K up to 10K so there is a group for you.</p>
+        <p>Running with others makes it easier to get started and easier to keep going. If you are nervous about your first session, that is completely normal. Come along, introduce yourself and we will look after the rest.</p>
+        <div class="btn-row"><a class="btn dark-btn" href="/join">How to join <Icon name="arrow" /></a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dark">
+    <div class="wrap">
+      <div class="head reveal"><div><div class="eyebrow">What we are about</div><h2>The Panther way</h2></div></div>
+      <div class="features">
+        {pillars.map(([t, p], i) => <div class="reveal" style={`--d:${(i % 2) * .1}s`}><span class="n">0{i + 1}</span><div><h3>{t}</h3><p>{p}</p></div></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split">
+      <div class="reveal"><div class="eyebrow">Beyond the run</div><h2>Hikes, events<br/>and socials</h2></div>
+      <div class="prose reveal" style="--d:.1s">
+        <p class="lede">The club is more than weekly training.</p>
+        <p>Each year the club heads out on group hikes, including the Annual Howth Hike, and gets together for social events. See what is coming up on the events page.</p>
+        <a class="link" href="/events">View events</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band"><div class="wrap"><h2>Say hello</h2><a class="btn" href="/contact">Contact us <Icon name="arrow" /></a></div></section>
+</Base>

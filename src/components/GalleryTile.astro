@@ -1,0 +1,20 @@
+---
+import { Image } from 'astro:assets';
+import { findImage } from '../lib/images';
+const { item, strip = false } = Astro.props;
+const img = findImage('gallery', item.file);
+const ratio = item.ratio ?? '4/5';
+---
+{img ? (
+  <button class="tile skeleton" type="button" data-cat={item.category} data-lb data-alt={item.alt} data-credit={item.credit ?? ''} aria-label={`Open photo: ${item.alt}`} style={strip ? '' : `aspect-ratio:${img.width}/${img.height}`}>
+    <Image src={img} alt={item.alt} widths={[400, 700, 1000, 1600]} sizes="(min-width: 64rem) 33vw, (min-width: 36rem) 50vw, 100vw" loading="lazy" data-full={img.src} />
+    <span class="cap">{item.category}</span>
+  </button>
+) : (
+  <div class="tile" data-cat={item.category} style={strip ? '' : `aspect-ratio:${ratio}`}>
+    <div class="ph" role="img" aria-label={`Placeholder: ${item.category} photo to be added`} style="height:100%">
+      <span>Photo to be added</span>
+      <b>{item.category}</b>
+    </div>
+  </div>
+)}

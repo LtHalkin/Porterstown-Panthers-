@@ -1,0 +1,12 @@
+[
+  { "id": "run-1", "category": "Club Runs", "file": "", "alt": "Panthers runners on a club run", "ratio": "4/5" },
+  { "id": "run-2", "category": "Club Runs", "file": "", "alt": "Group setting off from a meeting point", "ratio": "3/2" },
+  { "id": "hike-1", "category": "Group Hikes", "file": "", "alt": "Club members on a group hike", "ratio": "3/2" },
+  { "id": "hike-2", "category": "Group Hikes", "file": "", "alt": "Hikers at a summit", "ratio": "4/5" },
+  { "id": "race-1", "category": "Races", "file": "", "alt": "Panthers at a race", "ratio": "1/1" },
+  { "id": "race-2", "category": "Races", "file": "", "alt": "Finish line moment", "ratio": "4/5" },
+  { "id": "social-1", "category": "Social Events", "file": "", "alt": "Club social gathering", "ratio": "3/2" },
+  { "id": "social-2", "category": "Social Events", "file": "", "alt": "Members together after a session", "ratio": "1/1" },
+  { "id": "activity-1", "category": "Club Activities", "file": "", "alt": "Club activity", "ratio": "4/5" },
+  { "id": "activity-2", "category": "Club Activities", "file": "", "alt": "Panthers training session", "ratio": "3/2" }
+]

@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.astro';
+import { directions } from '../lib/site';
+const { sessions, compact = false } = Astro.props;
+---
+<ol class="schedule">
+  {sessions.map((s, i) => (
+    <li class="slot reveal" style={`--d:${i * 0.08}s`}>
+      <span class="d">{s.day}</span>
+      <span class="t"><em>{s.time}</em></span>
+      <div class="w">
+        <strong>{s.place.name}</strong>
+        <span style="opacity:.8">{s.place.area}</span>
+        {!compact && <div style="opacity:.8">{s.what}</div>}
+        {!compact && (
+          <a class="link" style="display:inline-block;margin-top:.6rem" href={directions(s.place.mapQuery)} rel="noopener">Directions</a>
+        )}
+      </div>
+    </li>
+  ))}
+</ol>

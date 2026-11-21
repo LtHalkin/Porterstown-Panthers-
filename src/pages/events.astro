@@ -1,0 +1,94 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import EventCard from '../components/EventCard.astro';
+import { Image } from 'astro:assets';
+import { findImage } from '../lib/images';
+import { site, allEvents, upcomingEvents, pastEvents, formatDate, parts } from '../lib/site';
+
+const featured = upcomingEvents.find((e) => e.featured);
+const categories = ['Upcoming events', 'Group hikes', 'Running events', 'Social gatherings', 'Annual events'];
+const fImg = featured && findImage('events', featured.image);
+const ld = upcomingEvents.map((e) => ({
+  '@context': 'https://schema.org', '@type': 'Event', name: `Porterstown Panthers ${e.title}`, startDate: e.date,
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode', eventStatus: 'https://schema.org/EventScheduled',
+  location: { '@type': 'Place', name: e.location, address: { '@type': 'PostalAddress', addressCountry: 'IE' } },
+  description: e.description, organizer: { '@type': 'Organization', name: site.name },
+}));
+---
+<Base title="Events, Hikes and Social Runs" description="Upcoming Porterstown Panthers events including the Annual Howth Hike on 28 December 2026, group hikes, running events and social gatherings." jsonLd={ld}>
+  <section class="page-hero"><div class="wrap"><div class="eyebrow">Events</div><h1>What's<br/>happening</h1><p class="lede">Hikes, runs and get-togethers from the Panthers.</p></div></section>
+
+  {featured && (
+    <section class="section grey" style="padding-block:clamp(2rem,5vw,4rem)">
+      <div class="wrap">
+        <article class="featured reveal">
+          <div class="event-media">
+            {fImg ? <Image src={fImg} alt={featured.imageAlt} widths={[600, 1000, 1600]} sizes="(min-width:56rem) 55vw, 100vw" loading="eager" />
+            : <div class="promo" role="img" aria-label="Annual Howth Hike promotional graphic placeholder"><span>Featured event</span><b>Annual<br/>Howth Hike</b><span>28 December 2026</span></div>}
+            <div class="date-tag"><strong>{parts(featured.date).day}</strong>{parts(featured.date).month} {parts(featured.date).year}</div>
+          </div>
+          <div class="body">
+            <span class="badge" style="margin-bottom:1.25rem">Featured event</span>
+            <h2 style="font-size:clamp(2.6rem,6vw,4.5rem);margin-bottom:1rem">Porterstown Panthers {featured.title}</h2>
+            <div class="meta" style="color:var(--grey-300)"><span>{formatDate(featured.date)}</span><span>{featured.location}</span></div>
+            <p style="color:var(--grey-300)">{featured.description}</p>
+            <div class="btn-row"><a class="btn" href={featured.link.url} rel="noopener">{featured.link.label} <Icon name="arrow" /></a></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="wrap">
+      <div class="tabs" role="group" aria-label="Filter events">
+        {categories.map((c, i) => <button class="tab" type="button" data-filter={c} aria-pressed={i === 0 ? 'true' : 'false'}>{c}</button>)}
+      </div>
+      <div id="up">
+        <div class="event-grid" id="up-grid">
+          {upcomingEvents.map((e) => <EventCard event={e} featured={e === featured} />)}
+        </div>
+        <p class="empty" id="up-empty" hidden>No other events listed here yet. Follow us on Instagram for new announcements.</p>
+      </div>
+
+      <div style="margin-top:5rem" id="archive-wrap" hidden={pastEvents.length === 0}>
+        <div class="eyebrow">Archive</div>
+        <h2 style="margin-bottom:2rem">Past events</h2>
+        <div class="event-grid" id="archive">{pastEvents.map((e) => <EventCard event={e} past />)}</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band"><div class="wrap"><h2>Never miss an event</h2><a class="btn" href={site.instagram.url} rel="noopener">Follow on Instagram <Icon name="arrow" /></a></div></section>
+</Base>
+
+<script>
+  const today = new Date().toISOString().slice(0, 10);
+  // Re-sort at view time so events move to the archive automatically once the date passes.
+  const grid = document.getElementById('up-grid')!;
+  const arch = document.getElementById('archive')!;
+  const wrapA = document.getElementById('archive-wrap')!;
+  document.querySelectorAll<HTMLElement>('[data-event]').forEach((el) => {
+    const past = el.dataset.date! < today;
+    const target = past ? arch : grid;
+    if (el.parentElement !== target) target.appendChild(el);
+  });
+  [...arch.children].sort((a, b) => (b as HTMLElement).dataset.date!.localeCompare((a as HTMLElement).dataset.date!)).forEach((c) => arch.appendChild(c));
+  [...grid.children].sort((a, b) => (a as HTMLElement).dataset.date!.localeCompare((b as HTMLElement).dataset.date!)).forEach((c) => grid.appendChild(c));
+  wrapA.hidden = arch.children.length === 0;
+
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const empty = document.getElementById('up-empty')!;
+  const apply = (f: string) => {
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === f)));
+    let n = 0;
+    grid.querySelectorAll<HTMLElement>('[data-event]').forEach((el) => {
+      const show = f === 'Upcoming events' ? !el.hasAttribute('data-featured') : el.dataset.tags!.split('|').includes(f);
+      el.hidden = !show; if (show) n++;
+    });
+    empty.hidden = n > 0;
+  };
+  buttons.forEach((b) => b.addEventListener('click', () => apply(b.dataset.filter!)));
+  apply('Upcoming events');
+</script>

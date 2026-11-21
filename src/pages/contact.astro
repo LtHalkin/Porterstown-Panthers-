@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../lib/site';
+---
+<Base title="Contact" description="Contact Porterstown Panthers running club in Dublin 15. Call 087 218 2461 or message us on Instagram @porterstown_panthers or Facebook.">
+  <section class="page-hero"><div class="wrap"><div class="eyebrow">Contact</div><h1>Get in<br/>touch</h1><p class="lede">Call, message or follow the club. Social media is the quickest way to see updates.</p></div></section>
+  <section class="section">
+    <div class="wrap split">
+      <ul class="contact-list reveal">
+        <li><a class="row" href={`tel:${site.phone.href}`}><Icon name="phone" /><span><span class="k">Phone</span><br/><span class="v">{site.phone.display}</span></span><Icon name="arrow" /></a></li>
+        <li><a class="row" href={site.instagram.url} rel="noopener"><Icon name="instagram" /><span><span class="k">Instagram</span><br/><span class="v">{site.instagram.handle}</span></span><Icon name="arrow" /></a></li>
+        <li><a class="row" href={site.facebook.url} rel="noopener"><Icon name="facebook" /><span><span class="k">Facebook</span><br/><span class="v">{site.facebook.name}</span></span><Icon name="arrow" /></a></li>
+      </ul>
+      <div class="reveal prose" style="--d:.1s">
+        <h2 style="margin-bottom:1.5rem">Find us</h2>
+        <p class="lede">Porterstown Panthers is based in {site.locality}.</p>
+        <p>We train on Tuesday, Thursday and Sunday. For meeting points and times, see the training page.</p>
+        <div class="btn-row"><a class="btn dark-btn" href="/training">Training schedule <Icon name="arrow" /></a><a class="btn outline" href="/join">Join the club</a></div>
+      </div>
+    </div>
+  </section>
+</Base>

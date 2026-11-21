@@ -1,0 +1,67 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Schedule from '../components/Schedule.astro';
+import MapBlock from '../components/MapBlock.astro';
+import { site, activeSeasonKey, activeSeason, activeSessions, seasonKeys, sessionsFor } from '../lib/site';
+const other = seasonKeys.filter((k) => k !== activeSeasonKey);
+const placeKeys = [...new Set(activeSessions.map((s) => s.location))];
+---
+<Base title="Training Schedule and Meeting Points" description="Porterstown Panthers weekly training: Tuesday and Thursday 6:45 PM, Sunday 8:30 AM. Meeting points, maps and directions for our Dublin 15 and Phoenix Park running sessions.">
+  <section class="page-hero"><div class="wrap"><div class="eyebrow">Training</div><h1>Train with<br/>the Panthers</h1><p class="lede">Three sessions a week. Check the season below so you know exactly where to meet.</p></div></section>
+
+  <section class="section dark">
+    <div class="wrap">
+      <div class="head">
+        <div class="reveal"><div class="eyebrow">Right now</div><h2>{activeSeason.label} schedule</h2></div>
+        <span class="badge">Current season: {activeSeason.label}</span>
+      </div>
+      {activeSeason.note && <div class="notice" style="margin-bottom:2rem"><strong>Note</strong>{activeSeason.note}</div>}
+      <Schedule sessions={activeSessions} />
+      <div class="notice" style="margin-top:2rem"><strong>Check social media first</strong>Last-minute changes are posted on Instagram <a class="link" href={site.instagram.url} rel="noopener">{site.instagram.handle}</a> and on Facebook.</div>
+    </div>
+  </section>
+
+  <section class="section dark" style="padding-top:0">
+    <div class="wrap">
+      <div class="eyebrow">Where to meet</div>
+      <h2 style="margin-bottom:2.5rem">Meeting points</h2>
+      <div class="split">
+        {placeKeys.map((k) => <MapBlock place={site.locations[k as keyof typeof site.locations]} />)}
+      </div>
+    </div>
+  </section>
+
+  {other.map((k) => (
+    <section class="section dark" style="padding-top:0">
+      <div class="wrap">
+        <div class="alt-season">
+          <span class="badge off">Not the current season</span>
+          <h3 style="margin:1rem 0 .5rem">{site.seasons[k].label} locations</h3>
+          <p>These are for reference only. Use the {activeSeason.label.toLowerCase()} schedule above until the club confirms a change on social media.</p>
+          {site.seasons[k].note && <p>{site.seasons[k].note}</p>}
+          <Schedule sessions={sessionsFor(k)} compact />
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="section">
+    <div class="wrap split">
+      <div class="reveal">
+        <div class="eyebrow">Distances</div>
+        <h2>Pick your<br/>distance</h2>
+        <p class="lede" style="margin-top:1.5rem">Choose the distance that suits you on the day.</p>
+        <ul class="pill-row" style="margin-top:1.5rem">{site.distances.map((d) => <li class="dist">{d}</li>)}</ul>
+      </div>
+      <div class="reveal" style="--d:.1s">
+        <div class="eyebrow">Session types</div>
+        <h2 style="margin-bottom:1.5rem">What we do</h2>
+        <ul class="type-list">
+          {site.trainingTypes.map((t) => <li><Icon name="route" /><div><strong>{t.title}</strong>{t.text}</div></li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+  <section class="cta-band"><div class="wrap"><h2>New? Just turn up</h2><a class="btn" href="/join">Join the club <Icon name="arrow" /></a></div></section>
+</Base>

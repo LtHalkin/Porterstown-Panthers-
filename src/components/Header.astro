@@ -1,0 +1,39 @@
+---
+import Logo from './Logo.astro';
+import { nav, site } from '../lib/site';
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const cur = (href: string) => (href === path ? 'page' : undefined);
+---
+<header class="header">
+  <div class="wrap">
+    <Logo />
+    <nav class="nav" aria-label="Main">
+      {nav.map((n) => <a href={n.href} class={n.cta ? 'cta' : ''} aria-current={cur(n.href)}>{n.label}</a>)}
+    </nav>
+    <button class="burger" aria-expanded="false" aria-controls="menu" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+<div class="menu" id="menu" aria-label="Menu">
+  {nav.map((n, i) => <a class="big" href={n.href} aria-current={cur(n.href)}>{n.label}<small>0{i + 1}</small></a>)}
+  <div class="menu-foot">
+    <a href={`tel:${site.phone.href}`}>{site.phone.display}</a>
+    <a href={site.instagram.url} rel="noopener">Instagram {site.instagram.handle}</a>
+  </div>
+</div>
+<script>
+  const b = document.querySelector<HTMLButtonElement>('.burger')!;
+  const m = document.getElementById('menu')!;
+  const set = (open: boolean) => {
+    b.setAttribute('aria-expanded', String(open));
+    b.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    m.classList.toggle('open', open);
+    document.body.classList.toggle('menu-open', open);
+    m.toggleAttribute('inert', !open);
+  };
+  set(false);
+  b.addEventListener('click', () => set(b.getAttribute('aria-expanded') !== 'true'));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
+  matchMedia('(min-width: 62rem)').addEventListener('change', (e) => e.matches && set(false));
+</script>
