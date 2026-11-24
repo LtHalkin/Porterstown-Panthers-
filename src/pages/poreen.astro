@@ -1,0 +1,184 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { LOOP_KM } from '../lib/poreen-route.js';
+import { POREEN_API } from '../lib/poreen';
+const loop = Math.round(LOOP_KM).toLocaleString('en-IE');
+---
+<Base title="Poreen: The Panthers Run Around Ireland" description={`Log your kilometres and watch every Porterstown Panther move around a ${loop} km loop of Ireland. Weekly, monthly and all-time leaderboard.`}>
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="eyebrow">Club challenge <span class="pr-day" data-day>#001</span></div>
+      <h1>Poreen</h1>
+      <p class="lede">Log your km. Every Panther gets a marker on a {loop} km loop around Ireland, and the whole club runs it together.</p>
+    </div>
+  </section>
+
+  <div class="poreen" data-api={POREEN_API}>
+    <section class="section dark pr-club">
+      <div class="wrap">
+        <div>
+          <div class="eyebrow">Together</div>
+          <div class="pr-big"><span id="prClubKm">0</span><small>km</small></div>
+        </div>
+        <div class="pr-where">
+          <p id="prClubWhere">The Panthers are on the start line in Dublin</p>
+          <div class="pr-bar" role="progressbar" aria-label="Progress on this lap" aria-valuemin="0" aria-valuemax="100" id="prClubBar"><span></span></div>
+          <p class="muted" id="prClubSub">Loading the club's runs…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section dark pr-main">
+      <div class="wrap pr-grid">
+        <div class="pr-mapcol">
+          <div id="prMap" class="pr-map" aria-label="Map of the Poreen route around Ireland"></div>
+          <p class="muted pr-note" id="prNote">The 🐆 is the whole club together. Tap a runner to follow them.</p>
+        </div>
+
+        <div class="pr-side">
+          <form class="pr-card" id="prForm" autocomplete="off">
+            <h3>Log a run</h3>
+            <label class="pr-field">
+              <span>Your name</span>
+              <input id="prName" list="prRunnerList" maxlength="32" required placeholder="e.g. Aoife" />
+              <datalist id="prRunnerList"></datalist>
+            </label>
+            <div class="pr-row">
+              <label class="pr-field">
+                <span>Distance (km)</span>
+                <input id="prKm" type="number" inputmode="decimal" min="0.1" max="250" step="0.01" required placeholder="8.4" />
+              </label>
+              <label class="pr-field">
+                <span>Date</span>
+                <input id="prDate" type="date" required />
+              </label>
+            </div>
+            <label class="pr-field" id="prCodeField" hidden>
+              <span>Club code</span>
+              <input id="prCode" autocomplete="off" placeholder="Ask the committee" />
+            </label>
+            <button class="btn" type="submit" id="prSubmit">Add my km <Icon name="arrow" /></button>
+            <p class="pr-msg" id="prMsg" role="status"></p>
+          </form>
+
+          <div class="pr-card pr-share" id="prShare" hidden>
+            <h3>Your Poreen</h3>
+            <pre id="prShareText"></pre>
+            <div class="btn-row">
+              <button class="btn" type="button" id="prCopy">Copy</button>
+              <button class="btn ghost" type="button" id="prNativeShare" hidden>Share</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap split">
+        <div>
+          <div class="eyebrow">Leaderboard</div>
+          <h2 style="margin-bottom:1.5rem">Who's out front</h2>
+          <div class="tabs" role="group" aria-label="Leaderboard period">
+            <button class="tab" type="button" data-period="week">Week</button>
+            <button class="tab" type="button" data-period="month">Month</button>
+            <button class="tab" type="button" data-period="all">All time</button>
+          </div>
+          <ol class="pr-board" id="prBoard"></ol>
+        </div>
+        <div>
+          <div class="eyebrow">Latest runs</div>
+          <h2 style="margin-bottom:1.5rem">Fresh miles</h2>
+          <ul class="pr-feed" id="prFeed"></ul>
+          <p class="pr-legend" id="prLegend"></p>
+          <p class="credit">Distances are straight lines between towns on the loop. Map &copy; OpenStreetMap contributors.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="cta-band"><div class="wrap"><h2>Not a Panther yet?</h2><a class="btn" href="/join">Join the club <Icon name="arrow" /></a></div></section>
+</Base>
+
+<script>
+  import '../scripts/poreen.js';
+</script>
+
+<style is:global>
+  .pr-day { color: var(--neon); margin-left: .25rem; }
+
+  /* Club strip */
+  .pr-club { padding-block: clamp(2.5rem, 5vw, 4rem); border-bottom: 1px solid #222; }
+  .pr-club .wrap { display: grid; gap: 1.5rem 3rem; align-items: center; }
+  @media (min-width: 48rem) { .pr-club .wrap { grid-template-columns: auto 1fr; } }
+  .pr-big { font: 800 clamp(4rem, 12vw, 7.5rem)/.85 var(--font-display); font-variant-numeric: tabular-nums; }
+  .pr-big small { font-size: .35em; color: var(--neon); margin-left: .3rem; letter-spacing: .06em; }
+  .pr-where p { margin: 0; }
+  #prClubWhere { font: 800 clamp(1.4rem, 3vw, 2rem)/1.05 var(--font-display); text-transform: uppercase; }
+  .pr-where .muted { margin-top: .75rem; font-size: .95rem; }
+  .pr-bar { height: .75rem; margin-top: 1rem; background: #222; overflow: hidden; clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
+  .pr-bar span { display: block; height: 100%; width: 0; background: var(--neon); transition: width .8s var(--ease); }
+
+  /* Map + form */
+  .pr-main { padding-top: clamp(2.5rem, 5vw, 4rem); }
+  .pr-grid { display: grid; gap: 2rem; align-items: start; }
+  @media (min-width: 60rem) { .pr-grid { grid-template-columns: 1.4fr 1fr; } .pr-mapcol { position: sticky; top: calc(var(--header-h) + 1rem); } }
+  .pr-map { height: min(70vh, 40rem); min-height: 22rem; border: 1px solid #2b2b2b; background: #111; z-index: 0; }
+  .pr-map .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.75) contrast(.95) saturate(.35); }
+  .pr-map.leaflet-container { background: #111; font-family: var(--font-body); }
+  .pr-map .leaflet-control-zoom a { background: var(--black); color: var(--white); border-color: #333; }
+  .pr-map .leaflet-control-attribution { background: rgba(10, 10, 10, .8); color: var(--grey-300); }
+  .pr-map .leaflet-control-attribution a { color: var(--neon); }
+  .pr-note { margin: .75rem 0 0; font-size: .9rem; }
+  .pr-note button { background: none; border: 0; padding: 0; color: var(--neon); font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+
+  .pr-side { display: grid; gap: 1.5rem; min-width: 0; }
+  .pr-card { background: #141414; border: 1px solid #2b2b2b; border-top: 4px solid var(--neon); padding: clamp(1.25rem, 3vw, 2rem); display: grid; gap: 1rem; }
+  .pr-card h3 { margin-bottom: .25rem; }
+  .pr-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 24rem) { .pr-row { grid-template-columns: 1fr; } }
+  .pr-field { display: grid; gap: .4rem; min-width: 0; }
+  .pr-field span { font: 700 .72rem/1 var(--font-body); letter-spacing: .18em; text-transform: uppercase; color: var(--grey-300); }
+  .pr-field input { width: 100%; min-height: 3rem; padding: .7rem .9rem; background: var(--black); color: var(--white); border: 1px solid #3a3a3a; border-radius: 0; font: 400 1rem var(--font-body); color-scheme: dark; }
+  .pr-field input:focus { outline: none; border-color: var(--neon); box-shadow: 0 0 0 1px var(--neon); }
+  .pr-card .btn { justify-content: center; }
+  .pr-card .btn:disabled { opacity: .6; cursor: progress; }
+  .pr-msg { margin: 0; min-height: 1.5em; font-size: .95rem; color: var(--grey-300); }
+  .pr-msg.err { color: #ff8a80; }
+  .pr-share pre { margin: 0; white-space: pre-wrap; font: 400 1.05rem/1.6 var(--font-body); color: var(--white); }
+
+  /* Map markers */
+  .pr-pin { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--black); color: var(--black); font: 800 13px/1 var(--font-display); letter-spacing: .02em; box-shadow: 0 2px 8px rgb(0 0 0 / .6); }
+  .pr-pin.sel { outline: 3px solid var(--neon); outline-offset: 2px; }
+  .pr-panther { font-size: 24px; line-height: 1; filter: drop-shadow(0 0 6px rgb(185 255 26 / .7)); }
+
+  /* Leaderboard */
+  .pr-board, .pr-feed { list-style: none; margin: 0; padding: 0; border-top: 3px solid var(--black); }
+  .pr-board li, .pr-feed li { border-bottom: 1px solid #d0d0cc; }
+  .pr-runner { width: 100%; display: grid; grid-template-columns: 2.75rem 1fr auto; gap: 1rem; align-items: center; padding: 1rem .25rem; background: none; border: 0; text-align: left; font: inherit; color: inherit; cursor: pointer; transition: background .25s, padding .3s var(--ease); }
+  .pr-runner:hover { background: var(--grey-100); padding-inline: .75rem; }
+  .pr-runner[aria-pressed='true'] { background: var(--neon); color: var(--neon-ink); padding-inline: .75rem; }
+  .pr-rank { font: 800 2.2rem/1 var(--font-display); }
+  .pr-board li:nth-child(n + 4) .pr-rank { color: var(--grey-500); }
+  .pr-runner[aria-pressed='true'] .pr-rank { color: var(--neon-ink); }
+  .pr-who { min-width: 0; }
+  .pr-who b { display: flex; align-items: center; gap: .6rem; font: 800 1.5rem/1 var(--font-display); text-transform: uppercase; }
+  .pr-who b span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pr-dot { width: .7rem; height: .7rem; border-radius: 50%; flex: none; border: 1px solid var(--black); }
+  .pr-who small { display: block; margin-top: .3rem; font-size: .85rem; color: var(--grey-700); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pr-km { text-align: right; font-variant-numeric: tabular-nums; }
+  .pr-km b { font: 800 2rem/1 var(--font-display); }
+  .pr-km small { display: block; font-size: .8rem; color: var(--grey-500); }
+  .pr-runner[aria-pressed='true'] small { color: var(--neon-ink); }
+  .pr-empty { padding: 1.5rem 0; margin: 0; color: var(--grey-500); }
+
+  /* Feed */
+  .pr-feed li { display: grid; grid-template-columns: 2.25rem 1fr auto; gap: .75rem; align-items: center; padding: .9rem 0; }
+  .pr-feed li:has(.pr-empty) { display: block; }
+  .pr-feed .emo { font-size: 1.4rem; text-align: center; }
+  .pr-feed b { font-weight: 700; }
+  .pr-feed .when { display: block; font-size: .85rem; color: var(--grey-500); }
+  .pr-del { min-height: 2.25rem; padding: .3rem .8rem; background: none; border: 1px solid #d0d0cc; color: #b3261e; font: 700 .75rem var(--font-body); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+  .pr-del:hover { border-color: #b3261e; }
+  .pr-legend { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin: 1.5rem 0 .75rem; font-size: .9rem; color: var(--grey-700); }
+</style>

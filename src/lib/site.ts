@@ -9,6 +9,7 @@ export const nav = [
   { label: 'Training', href: '/training' },
   { label: 'Events', href: '/events' },
   { label: 'Gallery', href: '/gallery' },
+  { label: 'Poreen', href: '/poreen' },
   { label: 'Join Us', href: '/join', cta: true },
   { label: 'Contact', href: '/contact' },
 ];

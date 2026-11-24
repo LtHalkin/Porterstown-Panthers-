@@ -9,6 +9,7 @@ import Lightbox from '../components/Lightbox.astro';
 import gallery from '../data/gallery.json';
 import { site, activeSessions, activeSeason, upcomingEvents } from '../lib/site';
 import { firstImage, findImage } from '../lib/images';
+import { LOOP_KM } from '../lib/poreen-route.js';
 
 const hero = firstImage('hero');
 const next = upcomingEvents.slice(0, 2);
@@ -70,6 +71,19 @@ const why = [
         <a class="link" href="/events">All events</a>
       </div>
       {next.length ? <div class="event-grid">{next.map((e) => <EventCard event={e} />)}</div> : <p class="empty">No events announced right now. Follow us on Instagram for the latest.</p>}
+    </div>
+  </section>
+
+  <section class="section dark">
+    <div class="wrap split wide-left">
+      <div class="reveal">
+        <div class="eyebrow">Club challenge</div>
+        <h2>Poreen: run <span class="hl">Ireland</span> together</h2>
+      </div>
+      <div class="reveal prose" style="--d:.1s">
+        <p class="lede">Log your km after every run. Every Panther moves around a {Math.round(LOOP_KM).toLocaleString('en-IE')} km loop of Ireland, and the leaderboard updates as you go.</p>
+        <a class="btn" href="/poreen">Log your km <Icon name="arrow" /></a>
+      </div>
     </div>
   </section>
 

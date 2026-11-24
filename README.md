@@ -75,3 +75,11 @@ npm run dev      # local dev server
 npm run build    # production build to dist/
 npm run preview  # serve the build
 ```
+
+## Poreen (`/poreen`)
+
+The club's run-around-Ireland challenge: members log km, everyone gets a marker on a loop around
+Ireland, with a week / month / all-time leaderboard and a shareable result. The runs are stored by a
+separate Cloudflare Worker and database ([LtHalkin/Poreen](https://github.com/LtHalkin/Poreen));
+this page talks to its API (`src/lib/poreen.ts`). The route is in `src/lib/poreen-route.js`.
+Logging a run needs the club code, which is set on that Worker (see its README).
