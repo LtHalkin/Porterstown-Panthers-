@@ -78,8 +78,18 @@ npm run preview  # serve the build
 
 ## Poreen (`/poreen`)
 
-The club's run-around-Ireland challenge: members log km, everyone gets a marker on a loop around
-Ireland, with a week / month / all-time leaderboard and a shareable result. The runs are stored by a
-separate Cloudflare Worker and database ([LtHalkin/Poreen](https://github.com/LtHalkin/Poreen));
-this page talks to its API (`src/lib/poreen.ts`). The route is in `src/lib/poreen-route.js`.
-Logging a run needs the club code, which is set on that Worker (see its README).
+The club's run around Ireland. Members log their km and move along a 2,454 km route of real roads,
+paths and greenways, past 30 checkpoints from Hook Lighthouse to Malin Head. There's a live map,
+a weekly / monthly / all-time leaderboard with a podium, weekly awards, an activity feed with kudos,
+runner profiles with a stamp passport, club stats, and share pictures for Instagram or WhatsApp.
+The homepage shows the club's live progress too.
+
+- **Runs are stored** by a separate Cloudflare Worker and database: [LtHalkin/Poreen](https://github.com/LtHalkin/Poreen).
+  Its README covers the club code, the committee code and starting a new season.
+  The API address is in `src/lib/poreen.ts` (`PUBLIC_POREEN_API` overrides it for local testing).
+- **The page**: `src/pages/poreen.astro`, styles in `src/styles/poreen.css`, scripts in `src/scripts/poreen/`
+  (`main.js` page logic, `model.js` stats and stamps, `map.js` the map, `share.js` share text and pictures).
+- **The route**: stops and checkpoint facts are in `scripts/poreen/stops.mjs`. After changing them, regenerate
+  the map data with `node scripts/poreen/build-data.mjs` (it routes along OpenStreetMap with the public OSRM
+  foot router and writes `src/lib/poreen-data.js`). `src/lib/poreen-route.js` has the helpers.
+- **Committee tools** are at the bottom of the page under Good to know › Committee tools.

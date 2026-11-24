@@ -1,184 +1,273 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { LOOP_KM } from '../lib/poreen-route.js';
+import { LOOP_KM, CHECKPOINTS } from '../lib/poreen-route.js';
 import { POREEN_API } from '../lib/poreen';
-const loop = Math.round(LOOP_KM).toLocaleString('en-IE');
----
-<Base title="Poreen: The Panthers Run Around Ireland" description={`Log your kilometres and watch every Porterstown Panther move around a ${loop} km loop of Ireland. Weekly, monthly and all-time leaderboard.`}>
-  <section class="page-hero">
-    <div class="wrap">
-      <div class="eyebrow">Club challenge <span class="pr-day" data-day>#001</span></div>
-      <h1>Poreen</h1>
-      <p class="lede">Log your km. Every Panther gets a marker on a {loop} km loop around Ireland, and the whole club runs it together.</p>
-    </div>
-  </section>
+import { site } from '../lib/site';
+import '../styles/poreen.css';
 
+const loop = Math.round(LOOP_KM).toLocaleString('en-IE');
+const cps = CHECKPOINTS.length;
+const chips = ['3K', '5K', '8K', '10K', 'Half'];
+const kinds = [
+  ['run', '🏃', 'Solo run'],
+  ['club', '🐆', 'Club session'],
+  ['parkrun', '🌳', 'parkrun'],
+  ['race', '🏅', 'Race'],
+];
+---
+<Base
+  title="Poreen: Run Ireland Together"
+  description={`The Porterstown Panthers' run around Ireland. Log your km and move along a ${loop} km route past ${cps} checkpoints, from Hook Lighthouse to Malin Head. Leaderboard, stamps and awards.`}
+  ogImage="/og-poreen.png"
+>
   <div class="poreen" data-api={POREEN_API}>
-    <section class="section dark pr-club">
+    <!-- Hero: where the club is right now -->
+    <section class="pr-hero">
+      <div class="pr-hero-slash" aria-hidden="true"></div>
       <div class="wrap">
-        <div>
-          <div class="eyebrow">Together</div>
-          <div class="pr-big"><span id="prClubKm">0</span><small>km</small></div>
+        <div class="eyebrow">Club challenge <span class="pr-day" data-day>#001</span></div>
+        <h1>Poreen</h1>
+        <p class="pr-hero-sub">Run Ireland <span class="hl">together</span></p>
+
+        <div class="pr-status" aria-live="polite">
+          <div class="pr-total">
+            <span class="pr-label">The Panthers have run</span>
+            <span class="pr-total-km"><span data-club-km>0</span><small>km</small></span>
+          </div>
+          <div class="pr-status-text">
+            <p class="pr-where" data-club-where>On the start line in Dublin</p>
+            <p class="pr-next" data-club-next>{loop} km of road and {cps} checkpoints ahead.</p>
+          </div>
         </div>
-        <div class="pr-where">
-          <p id="prClubWhere">The Panthers are on the start line in Dublin</p>
-          <div class="pr-bar" role="progressbar" aria-label="Progress on this lap" aria-valuemin="0" aria-valuemax="100" id="prClubBar"><span></span></div>
-          <p class="muted" id="prClubSub">Loading the club's runs…</p>
+
+        <div class="pr-rail" data-rail aria-hidden="true">
+          <div class="pr-rail-line"><span class="pr-rail-fill"></span></div>
+          <div class="pr-rail-ticks"></div>
+          <span class="pr-rail-cat">🐆</span>
+        </div>
+        <div class="pr-rail-ends" aria-hidden="true"><span>Dublin</span><span data-rail-lap>Lap 1</span><span>Dublin</span></div>
+
+        <div class="btn-row pr-hero-cta">
+          <a class="btn" href="#log">Log a run <Icon name="arrow" /></a>
+          <a class="btn ghost" href="#checkpoints">See the route</a>
         </div>
       </div>
     </section>
 
-    <section class="section dark pr-main">
-      <div class="wrap pr-grid">
+    <!-- Map and logging -->
+    <section class="section dark pr-play" id="log">
+      <div class="wrap pr-play-grid">
         <div class="pr-mapcol">
-          <div id="prMap" class="pr-map" aria-label="Map of the Poreen route around Ireland"></div>
-          <p class="muted pr-note" id="prNote">The 🐆 is the whole club together. Tap a runner to follow them.</p>
+          <div class="pr-map-wrap">
+            <div id="prMap" class="pr-map" role="region" aria-label="Map of the Poreen route around Ireland"></div>
+            <button class="pr-map-unlock" type="button" data-map-unlock hidden>Tap to move the map</button>
+            <div class="pr-map-tools">
+              <button type="button" data-map="club" title="Find the club">🐆<span class="sr-only">Find the club</span></button>
+              <button type="button" data-map="fit" title="Whole route"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg><span class="sr-only">Show the whole route</span></button>
+            </div>
+          </div>
+          <p class="pr-map-note" data-map-note>The 🐆 is the whole club together. Tap a runner or a checkpoint.</p>
         </div>
 
         <div class="pr-side">
-          <form class="pr-card" id="prForm" autocomplete="off">
-            <h3>Log a run</h3>
+          <div class="pr-me" data-me hidden></div>
+
+          <form class="pr-card pr-form" id="prForm" autocomplete="off" novalidate>
+            <div class="pr-form-head">
+              <h2 class="pr-card-title" data-form-title>Log a run</h2>
+              <button class="pr-textbtn" type="button" data-cancel-edit hidden>Cancel</button>
+            </div>
+
             <label class="pr-field">
               <span>Your name</span>
-              <input id="prName" list="prRunnerList" maxlength="32" required placeholder="e.g. Aoife" />
-              <datalist id="prRunnerList"></datalist>
+              <input name="name" list="prRunners" maxlength="32" required placeholder="e.g. Aoife K" autocomplete="nickname" />
+              <datalist id="prRunners"></datalist>
             </label>
-            <div class="pr-row">
-              <label class="pr-field">
-                <span>Distance (km)</span>
-                <input id="prKm" type="number" inputmode="decimal" min="0.1" max="250" step="0.01" required placeholder="8.4" />
-              </label>
-              <label class="pr-field">
-                <span>Date</span>
-                <input id="prDate" type="date" required />
-              </label>
-            </div>
-            <label class="pr-field" id="prCodeField" hidden>
-              <span>Club code</span>
-              <input id="prCode" autocomplete="off" placeholder="Ask the committee" />
-            </label>
-            <button class="btn" type="submit" id="prSubmit">Add my km <Icon name="arrow" /></button>
-            <p class="pr-msg" id="prMsg" role="status"></p>
-          </form>
 
-          <div class="pr-card pr-share" id="prShare" hidden>
-            <h3>Your Poreen</h3>
-            <pre id="prShareText"></pre>
-            <div class="btn-row">
-              <button class="btn" type="button" id="prCopy">Copy</button>
-              <button class="btn ghost" type="button" id="prNativeShare" hidden>Share</button>
+            <div class="pr-field">
+              <span id="prDistLabel">Distance</span>
+              <div class="pr-dist">
+                <input name="km" type="number" inputmode="decimal" min="0.1" step="0.01" required placeholder="8.4" aria-labelledby="prDistLabel" />
+                <div class="pr-seg" role="group" aria-label="Units">
+                  <button type="button" data-unit="km" aria-pressed="true">km</button>
+                  <button type="button" data-unit="mi" aria-pressed="false">mi</button>
+                </div>
+              </div>
+              <div class="pr-chips" aria-label="Quick distances">
+                {chips.map((c) => <button type="button" class="pr-chip" data-dist={c === 'Half' ? '21.1' : String(parseInt(c))}>{c}</button>)}
+              </div>
             </div>
-          </div>
+
+            <div class="pr-row">
+              <div class="pr-field">
+                <label for="prDate">Date</label>
+                <input id="prDate" name="date" type="date" required />
+                <div class="pr-chips">
+                  <button type="button" class="pr-chip" data-day-pick="0">Today</button>
+                  <button type="button" class="pr-chip" data-day-pick="1">Yesterday</button>
+                </div>
+              </div>
+              <label class="pr-field">
+                <span>Time <em>optional</em></span>
+                <input name="time" inputmode="numeric" placeholder="mm:ss" maxlength="9" />
+                <small class="pr-pace" data-pace></small>
+              </label>
+            </div>
+
+            <fieldset class="pr-field pr-kinds">
+              <legend>Type</legend>
+              <div class="pr-chips">
+                {kinds.map(([v, e, l], i) => (
+                  <label class="pr-chip pr-chip-radio"><input type="radio" name="kind" value={v} checked={i === 0} /><span>{e} {l}</span></label>
+                ))}
+              </div>
+            </fieldset>
+
+            <label class="pr-field">
+              <span>Note <em>optional</em></span>
+              <input name="note" maxlength="80" placeholder="Hill reps in the Park" />
+            </label>
+
+            <label class="pr-field" data-code-field hidden>
+              <span>Club code</span>
+              <input name="code" autocomplete="off" autocapitalize="off" placeholder="Ask the committee" />
+            </label>
+
+            <button class="btn pr-submit" type="submit" data-submit>Add my km <Icon name="arrow" /></button>
+            <p class="pr-msg" data-msg role="status"></p>
+          </form>
         </div>
       </div>
     </section>
 
-    <section class="section">
-      <div class="wrap split">
-        <div>
-          <div class="eyebrow">Leaderboard</div>
-          <h2 style="margin-bottom:1.5rem">Who's out front</h2>
-          <div class="tabs" role="group" aria-label="Leaderboard period">
+    <!-- Checkpoints -->
+    <section class="section pr-cps" id="checkpoints">
+      <div class="wrap">
+        <div class="head">
+          <div>
+            <div class="eyebrow">The route</div>
+            <h2>{cps} checkpoints</h2>
+          </div>
+          <div class="pr-track-nav">
+            <button type="button" class="pr-arrow" data-track="-1" aria-label="Previous checkpoints"><Icon name="prev" /></button>
+            <button type="button" class="pr-arrow" data-track="1" aria-label="Next checkpoints"><Icon name="next" /></button>
+          </div>
+        </div>
+        <p class="lede pr-cps-lede">{loop} km on real roads, paths and greenways, from Hook Lighthouse to Malin Head. When the club's combined km reach a checkpoint, it's stamped with the run that got us there.</p>
+        <ol class="pr-track" data-cps tabindex="0" aria-label="Checkpoints"></ol>
+      </div>
+    </section>
+
+    <!-- Leaderboard -->
+    <section class="section grey pr-lb" id="leaderboard">
+      <div class="wrap">
+        <div class="head">
+          <div>
+            <div class="eyebrow">Leaderboard</div>
+            <h2>Who's out front</h2>
+          </div>
+          <div class="tabs pr-tabs" role="group" aria-label="Leaderboard period">
             <button class="tab" type="button" data-period="week">Week</button>
             <button class="tab" type="button" data-period="month">Month</button>
             <button class="tab" type="button" data-period="all">All time</button>
           </div>
-          <ol class="pr-board" id="prBoard"></ol>
+        </div>
+        <div class="pr-podium" data-podium></div>
+        <ol class="pr-board" data-board></ol>
+      </div>
+    </section>
+
+    <!-- Activity and awards -->
+    <section class="section pr-activity" id="activity">
+      <div class="wrap pr-activity-grid">
+        <div>
+          <div class="eyebrow">Latest</div>
+          <h2>Fresh miles</h2>
+          <ul class="pr-feed" data-feed></ul>
+          <button class="btn outline pr-more" type="button" data-feed-more hidden>Show more</button>
+        </div>
+        <aside class="pr-awards-col">
+          <div class="eyebrow">This week</div>
+          <h2>Awards</h2>
+          <ul class="pr-awards" data-awards></ul>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Club stats -->
+    <section class="section dark pr-stats-sec" id="stats">
+      <div class="wrap">
+        <div class="head">
+          <div>
+            <div class="eyebrow">By the numbers</div>
+            <h2>Club stats</h2>
+          </div>
+          <button class="btn ghost" type="button" data-share-club>Share the club's progress</button>
+        </div>
+        <div class="pr-stats" data-stats></div>
+        <figure class="pr-chart">
+          <figcaption>Club km per week</figcaption>
+          <ol data-chart></ol>
+        </figure>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section grey pr-how" id="how">
+      <div class="wrap split">
+        <div>
+          <div class="eyebrow">How it works</div>
+          <h2>Run. Log.<br />Get stamped.</h2>
+          <ol class="steps">
+            <li><div><h3>Run anywhere</h3><p>Club sessions, parkrun, races or a solo spin. Every km counts.</p></div></li>
+            <li><div><h3>Log it here</h3><p>Your km move you around Ireland, and they push the club panther further too.</p></div></li>
+            <li><div><h3>Collect stamps</h3><p>Pass a checkpoint and it goes in your passport. {cps} of them, all the way round.</p></div></li>
+          </ol>
+          <p class="pr-legend" data-legend></p>
         </div>
         <div>
-          <div class="eyebrow">Latest runs</div>
-          <h2 style="margin-bottom:1.5rem">Fresh miles</h2>
-          <ul class="pr-feed" id="prFeed"></ul>
-          <p class="pr-legend" id="prLegend"></p>
-          <p class="credit">Distances are straight lines between towns on the loop. Map &copy; OpenStreetMap contributors.</p>
+          <div class="eyebrow">Questions</div>
+          <h2>Good to know</h2>
+          <div class="pr-faq">
+            <details>
+              <summary>What's the club code?</summary>
+              <p>It keeps strangers off the leaderboard. Ask at a session or message us on Instagram <a class="link" href={site.instagram.url} rel="noopener">{site.instagram.handle}</a>. You only enter it once on each phone.</p>
+            </details>
+            <details>
+              <summary>I made a mistake. Can I fix it?</summary>
+              <p>Yes. Open your profile (tap your name) and use Edit or Delete on the run. That works on the phone you logged it from. Otherwise ask the committee.</p>
+            </details>
+            <details>
+              <summary>Is the route real?</summary>
+              <p>Yes: {loop} km on real roads, paths and greenways, mapped with OpenStreetMap. It follows the coast anticlockwise from Dublin and skips ferries, so the Shannon crossing goes via Limerick.</p>
+            </details>
+            <details>
+              <summary>What happens after a full lap?</summary>
+              <p>You start lap two from the Ha'penny Bridge. Your stamps stay in your passport.</p>
+            </details>
+            <details>
+              <summary>Who can see my runs?</summary>
+              <p>Everything you log, including your name and notes, is public on this page. Use a first name and initial if you prefer.</p>
+            </details>
+            <details class="pr-committee" id="committee">
+              <summary>Committee tools</summary>
+              <div data-admin></div>
+            </details>
+          </div>
         </div>
       </div>
     </section>
   </div>
 
   <section class="cta-band"><div class="wrap"><h2>Not a Panther yet?</h2><a class="btn" href="/join">Join the club <Icon name="arrow" /></a></div></section>
+
+  <dialog class="pr-dialog pr-profile" data-profile aria-labelledby="prProfileName"></dialog>
+  <dialog class="pr-dialog pr-celebrate" data-celebrate aria-labelledby="prCelebrateTitle"></dialog>
+  <div class="pr-toast" data-toast role="status" aria-live="polite" hidden></div>
+  <canvas class="pr-confetti" data-confetti hidden aria-hidden="true"></canvas>
 </Base>
 
 <script>
-  import '../scripts/poreen.js';
+  import '../scripts/poreen/main.js';
 </script>
-
-<style is:global>
-  .pr-day { color: var(--neon); margin-left: .25rem; }
-
-  /* Club strip */
-  .pr-club { padding-block: clamp(2.5rem, 5vw, 4rem); border-bottom: 1px solid #222; }
-  .pr-club .wrap { display: grid; gap: 1.5rem 3rem; align-items: center; }
-  @media (min-width: 48rem) { .pr-club .wrap { grid-template-columns: auto 1fr; } }
-  .pr-big { font: 800 clamp(4rem, 12vw, 7.5rem)/.85 var(--font-display); font-variant-numeric: tabular-nums; }
-  .pr-big small { font-size: .35em; color: var(--neon); margin-left: .3rem; letter-spacing: .06em; }
-  .pr-where p { margin: 0; }
-  #prClubWhere { font: 800 clamp(1.4rem, 3vw, 2rem)/1.05 var(--font-display); text-transform: uppercase; }
-  .pr-where .muted { margin-top: .75rem; font-size: .95rem; }
-  .pr-bar { height: .75rem; margin-top: 1rem; background: #222; overflow: hidden; clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
-  .pr-bar span { display: block; height: 100%; width: 0; background: var(--neon); transition: width .8s var(--ease); }
-
-  /* Map + form */
-  .pr-main { padding-top: clamp(2.5rem, 5vw, 4rem); }
-  .pr-grid { display: grid; gap: 2rem; align-items: start; }
-  @media (min-width: 60rem) { .pr-grid { grid-template-columns: 1.4fr 1fr; } .pr-mapcol { position: sticky; top: calc(var(--header-h) + 1rem); } }
-  .pr-map { height: min(70vh, 40rem); min-height: 22rem; border: 1px solid #2b2b2b; background: #111; z-index: 0; }
-  .pr-map .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.75) contrast(.95) saturate(.35); }
-  .pr-map.leaflet-container { background: #111; font-family: var(--font-body); }
-  .pr-map .leaflet-control-zoom a { background: var(--black); color: var(--white); border-color: #333; }
-  .pr-map .leaflet-control-attribution { background: rgba(10, 10, 10, .8); color: var(--grey-300); }
-  .pr-map .leaflet-control-attribution a { color: var(--neon); }
-  .pr-note { margin: .75rem 0 0; font-size: .9rem; }
-  .pr-note button { background: none; border: 0; padding: 0; color: var(--neon); font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
-
-  .pr-side { display: grid; gap: 1.5rem; min-width: 0; }
-  .pr-card { background: #141414; border: 1px solid #2b2b2b; border-top: 4px solid var(--neon); padding: clamp(1.25rem, 3vw, 2rem); display: grid; gap: 1rem; }
-  .pr-card h3 { margin-bottom: .25rem; }
-  .pr-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  @media (max-width: 24rem) { .pr-row { grid-template-columns: 1fr; } }
-  .pr-field { display: grid; gap: .4rem; min-width: 0; }
-  .pr-field span { font: 700 .72rem/1 var(--font-body); letter-spacing: .18em; text-transform: uppercase; color: var(--grey-300); }
-  .pr-field input { width: 100%; min-height: 3rem; padding: .7rem .9rem; background: var(--black); color: var(--white); border: 1px solid #3a3a3a; border-radius: 0; font: 400 1rem var(--font-body); color-scheme: dark; }
-  .pr-field input:focus { outline: none; border-color: var(--neon); box-shadow: 0 0 0 1px var(--neon); }
-  .pr-card .btn { justify-content: center; }
-  .pr-card .btn:disabled { opacity: .6; cursor: progress; }
-  .pr-msg { margin: 0; min-height: 1.5em; font-size: .95rem; color: var(--grey-300); }
-  .pr-msg.err { color: #ff8a80; }
-  .pr-share pre { margin: 0; white-space: pre-wrap; font: 400 1.05rem/1.6 var(--font-body); color: var(--white); }
-
-  /* Map markers */
-  .pr-pin { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--black); color: var(--black); font: 800 13px/1 var(--font-display); letter-spacing: .02em; box-shadow: 0 2px 8px rgb(0 0 0 / .6); }
-  .pr-pin.sel { outline: 3px solid var(--neon); outline-offset: 2px; }
-  .pr-panther { font-size: 24px; line-height: 1; filter: drop-shadow(0 0 6px rgb(185 255 26 / .7)); }
-
-  /* Leaderboard */
-  .pr-board, .pr-feed { list-style: none; margin: 0; padding: 0; border-top: 3px solid var(--black); }
-  .pr-board li, .pr-feed li { border-bottom: 1px solid #d0d0cc; }
-  .pr-runner { width: 100%; display: grid; grid-template-columns: 2.75rem 1fr auto; gap: 1rem; align-items: center; padding: 1rem .25rem; background: none; border: 0; text-align: left; font: inherit; color: inherit; cursor: pointer; transition: background .25s, padding .3s var(--ease); }
-  .pr-runner:hover { background: var(--grey-100); padding-inline: .75rem; }
-  .pr-runner[aria-pressed='true'] { background: var(--neon); color: var(--neon-ink); padding-inline: .75rem; }
-  .pr-rank { font: 800 2.2rem/1 var(--font-display); }
-  .pr-board li:nth-child(n + 4) .pr-rank { color: var(--grey-500); }
-  .pr-runner[aria-pressed='true'] .pr-rank { color: var(--neon-ink); }
-  .pr-who { min-width: 0; }
-  .pr-who b { display: flex; align-items: center; gap: .6rem; font: 800 1.5rem/1 var(--font-display); text-transform: uppercase; }
-  .pr-who b span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .pr-dot { width: .7rem; height: .7rem; border-radius: 50%; flex: none; border: 1px solid var(--black); }
-  .pr-who small { display: block; margin-top: .3rem; font-size: .85rem; color: var(--grey-700); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .pr-km { text-align: right; font-variant-numeric: tabular-nums; }
-  .pr-km b { font: 800 2rem/1 var(--font-display); }
-  .pr-km small { display: block; font-size: .8rem; color: var(--grey-500); }
-  .pr-runner[aria-pressed='true'] small { color: var(--neon-ink); }
-  .pr-empty { padding: 1.5rem 0; margin: 0; color: var(--grey-500); }
-
-  /* Feed */
-  .pr-feed li { display: grid; grid-template-columns: 2.25rem 1fr auto; gap: .75rem; align-items: center; padding: .9rem 0; }
-  .pr-feed li:has(.pr-empty) { display: block; }
-  .pr-feed .emo { font-size: 1.4rem; text-align: center; }
-  .pr-feed b { font-weight: 700; }
-  .pr-feed .when { display: block; font-size: .85rem; color: var(--grey-500); }
-  .pr-del { min-height: 2.25rem; padding: .3rem .8rem; background: none; border: 1px solid #d0d0cc; color: #b3261e; font: 700 .75rem var(--font-body); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
-  .pr-del:hover { border-color: #b3261e; }
-  .pr-legend { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin: 1.5rem 0 .75rem; font-size: .9rem; color: var(--grey-700); }
-</style>

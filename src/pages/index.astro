@@ -9,7 +9,8 @@ import Lightbox from '../components/Lightbox.astro';
 import gallery from '../data/gallery.json';
 import { site, activeSessions, activeSeason, upcomingEvents } from '../lib/site';
 import { firstImage, findImage } from '../lib/images';
-import { LOOP_KM } from '../lib/poreen-route.js';
+import { LOOP_KM, CHECKPOINTS } from '../lib/poreen-route.js';
+import { POREEN_API } from '../lib/poreen';
 
 const hero = firstImage('hero');
 const next = upcomingEvents.slice(0, 2);
@@ -81,11 +82,48 @@ const why = [
         <h2>Poreen: run <span class="hl">Ireland</span> together</h2>
       </div>
       <div class="reveal prose" style="--d:.1s">
-        <p class="lede">Log your km after every run. Every Panther moves around a {Math.round(LOOP_KM).toLocaleString('en-IE')} km loop of Ireland, and the leaderboard updates as you go.</p>
+        <p class="lede">Log your km after every run. Every Panther moves along a {Math.round(LOOP_KM).toLocaleString('en-IE')} km route around Ireland, collecting stamps at {CHECKPOINTS.length} checkpoints from Hook Head to Malin Head.</p>
+        <a class="pr-teaser" href="/poreen" data-poreen-teaser data-api={POREEN_API} hidden>
+          <span class="pr-teaser-km"><span data-t-km></span><small>km together</small></span>
+          <span class="pr-teaser-where" data-t-where></span>
+          <span class="pr-teaser-bar"><span data-t-bar></span></span>
+          <span class="pr-teaser-next" data-t-next></span>
+        </a>
         <a class="btn" href="/poreen">Log your km <Icon name="arrow" /></a>
       </div>
     </div>
   </section>
+  <script>
+    import { locate, describe, LOOP_KM } from '../lib/poreen-route.js';
+    const el = document.querySelector<HTMLAnchorElement>('[data-poreen-teaser]');
+    if (el) {
+      fetch(`${el.dataset.api}/api/runs`)
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((d: { runs: { km: number }[] }) => {
+          const km = d.runs.reduce((s, r) => s + r.km, 0);
+          if (!km) return;
+          const w = locate(km);
+          const fmt = (n: number) => (n >= 100 ? Math.round(n).toLocaleString('en-IE') : (Math.round(n * 10) / 10).toLocaleString('en-IE'));
+          el.querySelector('[data-t-km]')!.textContent = fmt(km);
+          el.querySelector('[data-t-where]')!.textContent = `The Panthers are ${describe(km)}`;
+          el.querySelector<HTMLElement>('[data-t-bar]')!.style.width = `${(w.lapKm / LOOP_KM) * 100}%`;
+          el.querySelector('[data-t-next]')!.textContent = `Next checkpoint: ${w.nextCp.emoji} ${w.nextCp.title}, ${fmt(w.toNextCp)} km`;
+          el.hidden = false;
+        })
+        .catch(() => {});
+    }
+  </script>
+  <style>
+    .pr-teaser { display: grid; gap: .5rem; margin: 0 0 1.75rem; padding: 1.25rem 1.4rem; background: #141414; border-left: 6px solid var(--neon); text-decoration: none; color: var(--white); transition: background .25s; }
+    .pr-teaser:hover { background: #1b1b1b; }
+    .pr-teaser[hidden] { display: none; }
+    .pr-teaser-km { font: 800 clamp(2.6rem, 6vw, 3.6rem)/.9 var(--font-display); }
+    .pr-teaser-km small { font-size: .38em; margin-left: .35rem; color: var(--neon); text-transform: uppercase; letter-spacing: .06em; }
+    .pr-teaser-where { font: 800 1.25rem/1.1 var(--font-display); text-transform: uppercase; }
+    .pr-teaser-bar { display: block; height: 6px; background: #2a2a2a; }
+    .pr-teaser-bar span { display: block; height: 100%; width: 0; background: var(--neon); }
+    .pr-teaser-next { font-size: .92rem; color: var(--grey-300); }
+  </style>
 
   <section class="section dark" style="padding-top:0">
     <div class="wrap">
